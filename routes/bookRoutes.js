@@ -1,0 +1,54 @@
+const express = require('express');
+const router = express.Router();
+const db = require('../config/db');
+
+// GET /api/books - Get all books
+router.get('/', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM books ORDER BY created_at DESC');
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
+// POST /api/books - Add a book
+router.post('/', async (req, res) => {
+    const { title, price, category, description, image, pdf_file } = req.body;
+    try {
+        const [result] = await db.query(
+            'INSERT INTO books (title, price, category, description, image, pdf_file) VALUES (?, ?, ?, ?, ?, ?)',
+            [title, price, category, description, image, pdf_file]
+        );
+        res.status(201).json({ id: result.insertId, title, price, category });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
+// GET /api/books/search - Search books (Optional, filtering can be done on frontend if small dataset)
+router.get('/search', async (req, res) => {
+    const { q, category } = req.query;
+    let query = 'SELECT * FROM books WHERE 1=1';
+    const params = [];
+
+    if (q) {
+        query += ' AND title LIKE ?';
+        params.push(`%${q}%`);
+    }
+    if (category && category !== 'All') {
+        query += ' AND category = ?';
+        params.push(category);
+    }
+
+    try {
+        const [rows] = await db.query(query, params);
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
+module.exports = router;
