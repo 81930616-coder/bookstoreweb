@@ -9,7 +9,7 @@ import AboutPage from './pages/AboutPage';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import './index.css';
-import TestPage from './pages/TestPage';
+import TestPage from './pages/TestPage.js';
 
 // Inside <Routes>
 <Route path="/test" element={<TestPage />} />
