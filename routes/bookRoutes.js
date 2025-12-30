@@ -51,4 +51,15 @@ router.get('/search', async (req, res) => {
     }
 });
 
+// DELETE /api/books/:id - Delete a book
+router.delete('/:id', async (req, res) => {
+    try {
+        await db.query('DELETE FROM books WHERE id = ?', [req.params.id]);
+        res.json({ message: 'Book deleted' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
 module.exports = router;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, List, Upload, FileText, CheckCircle } from 'lucide-react';
+import { Plus, List, Upload, FileText, CheckCircle, Trash2 } from 'lucide-react';
 import { useMockData } from '../context/MockData';
 
 const AdminDashboard = () => {
-    const { isAdmin, addBook, requests } = useMockData();
+    const { isAdmin, addBook, requests, books, deleteBook } = useMockData();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('add'); // 'add' or 'requests'
     const [newBook, setNewBook] = useState({
@@ -51,6 +51,13 @@ const AdminDashboard = () => {
                     >
                         <List size={18} style={{ marginRight: '8px', verticalAlign: 'text-bottom' }} />
                         Requests <span style={{ background: 'rgba(255,255,255,0.2)', padding: '2px 6px', borderRadius: '10px', fontSize: '12px' }}>{requests.length}</span>
+                    </button>
+                    <button
+                        className={activeTab === 'manage' ? 'btn-primary' : 'btn-secondary'}
+                        onClick={() => setActiveTab('manage')}
+                    >
+                        <List size={18} style={{ marginRight: '8px', verticalAlign: 'text-bottom' }} />
+                        Manage Books
                     </button>
                 </div>
             </div>
@@ -113,7 +120,7 @@ const AdminDashboard = () => {
                         </div>
                     </form>
                 </div>
-            ) : (
+            ) : activeTab === 'requests' ? (
                 <div className="glass-panel" style={{ borderRadius: '24px', overflow: 'hidden' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead style={{ background: 'rgba(0,0,0,0.2)' }}>
@@ -137,6 +144,46 @@ const AdminDashboard = () => {
                                         <td style={{ padding: '1.5rem' }}>{req.notes || '-'}</td>
                                         <td style={{ padding: '1.5rem' }}>
                                             <span style={{ background: 'rgba(255, 165, 0, 0.2)', color: 'orange', padding: '4px 12px', borderRadius: '12px', fontSize: '0.85rem' }}>Pending</span>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <div className="glass-panel" style={{ borderRadius: '24px', overflow: 'hidden' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead style={{ background: 'rgba(0,0,0,0.2)' }}>
+                            <tr>
+                                <th style={{ padding: '1.5rem', textAlign: 'left' }}>Book Title</th>
+                                <th style={{ padding: '1.5rem', textAlign: 'left' }}>Category</th>
+                                <th style={{ padding: '1.5rem', textAlign: 'left' }}>Price</th>
+                                <th style={{ padding: '1.5rem', textAlign: 'left' }}>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {books.length === 0 ? (
+                                <tr>
+                                    <td colSpan="4" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>No books found</td>
+                                </tr>
+                            ) : (
+                                books.map((book) => (
+                                    <tr key={book.id} style={{ borderTop: '1px solid var(--glass-border)' }}>
+                                        <td style={{ padding: '1.5rem' }}>{book.title}</td>
+                                        <td style={{ padding: '1.5rem' }}>{book.category}</td>
+                                        <td style={{ padding: '1.5rem' }}>${book.price}</td>
+                                        <td style={{ padding: '1.5rem' }}>
+                                            <button
+                                                onClick={() => {
+                                                    if (window.confirm('Are you sure you want to delete this book?')) {
+                                                        deleteBook(book.id);
+                                                    }
+                                                }}
+                                                style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
                                         </td>
                                     </tr>
                                 ))

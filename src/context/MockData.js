@@ -108,6 +108,19 @@ export const MockDataProvider = ({ children }) => {
         }
     };
 
+    const deleteBook = async (id) => {
+        try {
+            await fetch(`${API_URL}/books/${id}`, {
+                method: 'DELETE',
+            });
+            setBooks(prev => prev.filter(book => book.id !== id));
+            return true;
+        } catch (error) {
+            console.error("Error deleting book:", error);
+            return false;
+        }
+    };
+
     return (
         <MockDataContext.Provider value={{
             books,
@@ -119,6 +132,7 @@ export const MockDataProvider = ({ children }) => {
             addBook,
             requests,
             requestBook,
+            deleteBook,
             isCartOpen,
             toggleCart,
             loading
