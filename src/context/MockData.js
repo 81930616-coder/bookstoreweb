@@ -1,143 +1,152 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { supabase } from "../../supabaseClient";
 
 const MockDataContext = createContext();
-
 export const useMockData = () => useContext(MockDataContext);
 
 export const MockDataProvider = ({ children }) => {
-    const [books, setBooks] = useState([]);
-    const [cart, setCart] = useState([]);
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [requests, setRequests] = useState([]);
-    const [isCartOpen, setIsCartOpen] = useState(false);
-    const [loading, setLoading] = useState(true);
+  const [books, setBooks] = useState([]);
+  const [cart, setCart] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [requests, setRequests] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-    const API_URL = 'http://localhost:5000/api';
+  /* ===================== FETCH DATA ===================== */
 
-    // Fetch Books on Mount
-    useEffect(() => {
-        fetchBooks();
-    }, []);
+  useEffect(() => {
+    fetchBooks();
+  }, []);
 
-    // Fetch Requests if Admin
-    useEffect(() => {
-        if (isAdmin) {
-            fetchRequests();
-        }
-    }, [isAdmin]);
+  useEffect(() => {
+    if (isAdmin) fetchRequests();
+  }, [isAdmin]);
 
-    const fetchBooks = async () => {
-        try {
-            const res = await fetch(`${API_URL}/books`);
-            const data = await res.json();
-            setBooks(data);
-        } catch (error) {
-            console.error("Error fetching books:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const fetchBooks = async () => {
+    const { data, error } = await supabase
+      .from("books")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    const fetchRequests = async () => {
-        try {
-            const res = await fetch(`${API_URL}/requests`);
-            const data = await res.json();
-            setRequests(data);
-        } catch (error) {
-            console.error("Error fetching requests:", error);
-        }
-    };
+    if (!error) setBooks(data || []);
+    setLoading(false);
+  };
 
-    const toggleCart = () => setIsCartOpen(!isCartOpen);
+  const fetchRequests = async () => {
+    const { data, error } = await supabase
+      .from("requests")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    const addToCart = (book) => {
-        setCart(prev => [...prev, book]);
-    };
+    if (!error) setRequests(data || []);
+  };
 
-    const removeFromCart = (bookId) => {
-        setCart(prev => prev.filter(item => item.id !== bookId));
-    };
+  /* ===================== CART ===================== */
 
-    const loginAdmin = async (username, password) => {
-        try {
-            const res = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-            const data = await res.json();
-            if (data.success) {
-                setIsAdmin(true);
-                return true;
-            }
-            return false;
-        } catch (error) {
-            console.error("Login error:", error);
-            return false;
-        }
-    };
+  const toggleCart = () => setIsCartOpen(!isCartOpen);
 
-    const addBook = async (newBook) => {
-        try {
-            const res = await fetch(`${API_URL}/books`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newBook)
-            });
-            const savedBook = await res.json();
-            setBooks(prev => [...prev, savedBook]);
-            return true;
-        } catch (error) {
-            console.error("Error adding book:", error);
-            return false;
-        }
-    };
+  const addToCart = (book) => {
+    setCart((prev) => [...prev, book]);
+  };
 
-    const requestBook = async (request) => {
-        try {
-            await fetch(`${API_URL}/requests`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(request)
-            });
-            // Optionally refetch requests if admin is viewing, or just wait
-            return true;
-        } catch (error) {
-            console.error("Error asking for book:", error);
-            return false;
-        }
-    };
+  const removeFromCart = (bookId) => {
+    setCart((prev) => prev.filter((item) => item.id !== bookId));
+  };
 
-    const deleteBook = async (id) => {
-        try {
-            await fetch(`${API_URL}/books/${id}`, {
-                method: 'DELETE',
-            });
-            setBooks(prev => prev.filter(book => book.id !== id));
-            return true;
-        } catch (error) {
-            console.error("Error deleting book:", error);
-            return false;
-        }
-    };
+  /* ===================== ADMIN LOGIN ===================== */
+  // SIMPLE version (no auth yet)
+  const loginAdmin = async (username, password) => {
+    const { data } = await supabase
+      .from("admins")
+      .select("*")
+      .eq("username", username)
+      .eq("password", password)
+      .single();
 
-    return (
-        <MockDataContext.Provider value={{
-            books,
-            cart,
-            addToCart,
-            removeFromCart,
-            isAdmin,
-            loginAdmin,
-            addBook,
-            requests,
-            requestBook,
-            deleteBook,
-            isCartOpen,
-            toggleCart,
-            loading
-        }}>
-            {children}
-        </MockDataContext.Provider>
-    );
+    if (data) {
+      setIsAdmin(true);
+      return true;
+    }
+    return false;
+  };
+
+  /* ===================== BOOKS ===================== */
+
+  const addBook = async (newBook) => {
+    const { error } = await supabase.from("books").insert([
+      {
+        title: newBook.title,
+        price: newBook.price,
+        category: newBook.category,
+        description: newBook.description,
+        image: newBook.image,
+        pdf_file: newBook.pdfFile?.name || null,
+      },
+    ]);
+
+    if (!error) {
+      fetchBooks();
+      return true;
+    }
+    return false;
+  };
+
+  const deleteBook = async (id) => {
+    const { error } = await supabase.from("books").delete().eq("id", id);
+
+    if (!error) {
+      setBooks((prev) => prev.filter((b) => b.id !== id));
+      return true;
+    }
+    return false;
+  };
+
+  /* ===================== REQUESTS ===================== */
+
+  const requestBook = async (request) => {
+    const { error } = await supabase.from("requests").insert([
+      {
+        title: request.title,
+        author: request.author || null,
+        notes: request.notes || null,
+        status: "pending",
+      },
+    ]);
+
+    if (!error) return true;
+    return false;
+  };
+
+  // Admin approves request (✔ button)
+  const approveRequest = async (id) => {
+    const { error } = await supabase
+      .from("requests")
+      .update({ status: "approved" })
+      .eq("id", id);
+
+    if (!error) fetchRequests();
+  };
+
+  return (
+    <MockDataContext.Provider
+      value={{
+        books,
+        cart,
+        addToCart,
+        removeFromCart,
+        isAdmin,
+        loginAdmin,
+        addBook,
+        deleteBook,
+        requests,
+        requestBook,
+        approveRequest,
+        isCartOpen,
+        toggleCart,
+        loading,
+      }}
+    >
+      {children}
+    </MockDataContext.Provider>
+  );
 };

@@ -1,6 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
+const multer = require('multer');
+const path = require('path');
+
+// Configure Multer
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage });
 
 // GET /api/books - Get all books
 router.get('/', async (req, res) => {
@@ -14,14 +28,19 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/books - Add a book
-router.post('/', async (req, res) => {
-    const { title, price, category, description, image, pdf_file } = req.body;
+router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'pdfFile', maxCount: 1 }]), async (req, res) => {
     try {
+        const { title, price, category, description } = req.body;
+
+        // Get file paths
+        const image = req.files['image'] ? `/uploads/${req.files['image'][0].filename}` : req.body.image || ''; // Fallback to URL if not uploaded
+        const pdf_file = req.files['pdfFile'] ? `/uploads/${req.files['pdfFile'][0].filename}` : '';
+
         const [result] = await db.query(
             'INSERT INTO books (title, price, category, description, image, pdf_file) VALUES (?, ?, ?, ?, ?, ?)',
             [title, price, category, description, image, pdf_file]
         );
-        res.status(201).json({ id: result.insertId, title, price, category });
+        res.status(201).json({ id: result.insertId, title, price, category, image, pdf_file });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server Error' });

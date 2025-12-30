@@ -16,7 +16,7 @@ const CartDrawer = () => {
 
     if (!isCartOpen) return null;
 
-    const total = cart.reduce((sum, item) => sum + item.price, 0).toFixed(2);
+    const total = cart.reduce((sum, item) => sum + (parseFloat(item.price) || 0), 0).toFixed(2);
 
     return (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000, display: 'flex', justifyContent: 'flex-end' }}>
