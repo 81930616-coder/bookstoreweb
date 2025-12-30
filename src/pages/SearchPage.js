@@ -8,7 +8,7 @@ const SearchPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCategory, setActiveCategory] = useState('All');
 
-    const categories = ['All', 'Thriller', 'Self-Help', 'Sci-Fi', 'Romance', 'Fantasy'];
+    const categories = ['All', 'Computer Science', 'Science', 'History', 'Stories', 'Math', 'Languages'];
 
     const filteredBooks = books.filter(book => {
         const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase());

@@ -79,12 +79,12 @@ const AdminDashboard = () => {
                         <div>
                             <label style={{ display: 'block', marginBottom: '8px' }}>Category</label>
                             <select value={newBook.category} onChange={e => setNewBook({ ...newBook, category: e.target.value })}>
-                                <option>Thriller</option>
-                                <option>Self-Help</option>
-                                <option>Sci-Fi</option>
-                                <option>Romance</option>
-                                <option>Fantasy</option>
-                                <option>Choice</option>
+                                <option>Computer Science</option>
+                                <option>Science</option>
+                                <option>History</option>
+                                <option>Stories</option>
+                                <option>Math</option>
+                                <option>Languages</option>
                             </select>
                         </div>
 
