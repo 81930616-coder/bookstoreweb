@@ -11,7 +11,7 @@ const HomePage = () => {
     return (
         <div className="animate-fade-in" style={{ paddingBottom: '4rem' }}>
             {/* Hero Section */}
-            <section style={{
+            <section className="hero-section" style={{
                 textAlign: 'center',
                 padding: '6rem 2rem',
                 marginBottom: '4rem',
@@ -19,7 +19,7 @@ const HomePage = () => {
                 overflow: 'hidden'
             }}>
                 <div style={{ position: 'relative', zIndex: 2 }}>
-                    <h1 style={{
+                    <h1 className="hero-title" style={{
                         fontSize: '4rem',
                         fontWeight: 800,
                         marginBottom: '1.5rem',
@@ -41,12 +41,12 @@ const HomePage = () => {
                         The pro way to manage your reading list.
                     </p>
 
-                    <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
-                        <Link to="/search" className="btn-primary" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px', padding: '15px 30px', fontSize: '1.1rem' }}>
+                    <div className="btn-group" style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
+                        <Link to="/search" className="btn-primary btn-full-mobile" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px', padding: '15px 30px', fontSize: '1.1rem' }}>
                             <Search size={20} />
                             Browse Library
                         </Link>
-                        <Link to="/request" className="btn-secondary" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px', padding: '15px 30px', fontSize: '1.1rem' }}>
+                        <Link to="/request" className="btn-secondary btn-full-mobile" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px', padding: '15px 30px', fontSize: '1.1rem' }}>
                             Request a Book
                             <ArrowRight size={20} />
                         </Link>

@@ -16,8 +16,8 @@ const RequestBookPage = () => {
     };
 
     return (
-        <div className="animate-fade-in" style={{ padding: '4rem 0', maxWidth: '600px', margin: '0 auto' }}>
-            <div className="glass-panel" style={{ padding: '3rem', borderRadius: '24px' }}>
+        <div className="animate-fade-in" style={{ padding: '2rem 0', maxWidth: '600px', margin: '0 auto' }}>
+            <div className="glass-panel" style={{ padding: '2rem', borderRadius: '24px' }}>
                 <h2 style={{ textAlign: 'center', fontSize: '2rem', marginBottom: '0.5rem' }}>Request a Book</h2>
                 <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '2rem' }}>
                     Can't find what you're looking for? Let us know!

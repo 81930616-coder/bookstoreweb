@@ -32,7 +32,7 @@ const SearchPage = () => {
                     />
                 </div>
 
-                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <div className="flex-stack-mobile" style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
                     {categories.map(cat => (
                         <button
                             key={cat}
@@ -46,7 +46,7 @@ const SearchPage = () => {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' }}>
+            <div className="grid-responsive" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '30px' }}>
                 {filteredBooks.map(book => (
                     <BookCard key={book.id} book={book} />
                 ))}

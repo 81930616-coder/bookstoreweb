@@ -22,7 +22,7 @@ const AboutPage = () => {
                 </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+            <div className="grid-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
                 <div className="glass-panel" style={{ padding: '2rem', borderRadius: '24px' }}>
                     <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <Users color="var(--accent)" /> The Community

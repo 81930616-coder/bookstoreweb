@@ -19,7 +19,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-dark);
   color: var(--text-main);
-  background-image: 
+  background-image:
     radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.15) 0%, transparent 20%),
     radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.15) 0%, transparent 20%);
   min-height: 100vh;
@@ -78,8 +78,15 @@ code {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
@@ -87,7 +94,9 @@ code {
 }
 
 /* Form Styles */
-input, select, textarea {
+input,
+select,
+textarea {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid var(--glass-border);
   border-radius: 8px;
@@ -99,8 +108,105 @@ input, select, textarea {
   transition: all 0.3s ease;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   outline: none;
   border-color: var(--primary);
   background: rgba(0, 0, 0, 0.4);
+}
+
+/* Responsive Utilities */
+@media (max-width: 1024px) {
+  .app-container {
+    max-width: 100%;
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 60px;
+  }
+
+  html {
+    font-size: 14px;
+    /* Scale down base font size */
+  }
+
+  .navbar {
+    padding: 0.8rem 1rem !important;
+    top: 10px !important;
+  }
+
+  .nav-links-desktop {
+    display: none !important;
+  }
+
+  .hero-section {
+    padding: 3rem 1rem !important;
+  }
+
+  .hero-title {
+    font-size: 2.5rem !important;
+  }
+
+  /* Grid adjustments */
+  .grid-responsive {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Stack flex containers on mobile */
+  .flex-stack-mobile {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .btn-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-full-mobile {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Mobile Menu Styles */
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 999;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    animation: fadeIn 0.3s ease-out;
+  }
+}
+
+/* Utility Classes for usage in JS components */
+.hidden-mobile {
+  /* Controlled by media query above usually, but helper here */
+}
+
+.visible-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .visible-mobile {
+    display: flex;
+  }
+
+  .hidden-mobile {
+    display: none !important;
+  }
 }
