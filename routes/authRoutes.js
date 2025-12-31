@@ -4,23 +4,16 @@ const db = require('../config/db');
 
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
-    const { username, password } = req.body; // In real app, password should be hashed!
+    const { email, password } = req.body;
 
     try {
-        // Simple verification (plaintext for demo purposes as requested by simple setup)
-        // IMPORTANT: Security Warning - Production apps MUST use bcrypt + JWT
-        const [rows] = await db.query('SELECT * FROM admins WHERE username = ?', [username || 'admin']); // Default to 'admin' if only password provided in frontend
+        const [rows] = await db.query('SELECT * FROM admins WHERE email = ?', [email]);
 
         if (rows.length > 0) {
             const admin = rows[0];
             if (admin.password === password) {
-                return res.json({ success: true, user: { username: admin.username } });
+                return res.json({ success: true, user: { email: admin.email } });
             }
-        }
-
-        // Fallback for hardcoded check if DB is empty
-        if (password === 'admin123') {
-            return res.json({ success: true, user: { username: 'admin' } });
         }
 
         res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -30,5 +23,30 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 });
+
+// POST /api/auth/signup
+router.post('/signup', async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !email.includes('@')) {
+        return res.status(400).json({ success: false, message: 'Invalid email address' });
+    }
+
+    try {
+        await db.query('INSERT INTO admins (email, password) VALUES (?, ?)', [email, password]);
+        res.json({ success: true, message: 'Admin created successfully' });
+    } catch (err) {
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ success: false, message: 'Email already exists' });
+        }
+        console.error('Signup Error:', err);
+        res.status(500).json({
+            success: false,
+            message: 'Server Error',
+            details: err.message
+        });
+    }
+});
+
 
 module.exports = router;

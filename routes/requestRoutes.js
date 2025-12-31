@@ -28,4 +28,16 @@ router.post('/', async (req, res) => {
     }
 });
 
+// DELETE /api/requests/:id - Delete a request
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.query('DELETE FROM requests WHERE id = ?', [id]);
+        res.json({ message: 'Request deleted' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
 module.exports = router;

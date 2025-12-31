@@ -3,21 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Lock, User } from 'lucide-react';
 import { useMockData } from '../context/MockData';
 
-const AdminLogin = () => {
+const AdminSignup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
-    const { loginAdmin } = useMockData();
+    const [success, setSuccess] = useState('');
+    const { signupAdmin } = useMockData();
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    const handleSignup = async (e) => {
         e.preventDefault();
-        const result = await loginAdmin(email, password);
+        setError('');
+        setSuccess('');
+
+        const result = await signupAdmin(email, password);
         if (result.success) {
-            navigate('/admin/dashboard');
+            setSuccess('Admin account created successfully! You can now log in.');
+            setTimeout(() => navigate('/admin'), 2000);
         } else {
-            setError(result.message);
+            setError(result.message + (result.details ? `: ${result.details}` : ''));
         }
     };
 
@@ -48,15 +53,15 @@ const AdminLogin = () => {
                     <ShieldCheck size={30} color="var(--accent)" />
                 </div>
 
-                <h2 style={{ marginBottom: '0.5rem' }}>Admin Login</h2>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Enter your administrator credentials.</p>
+                <h2 style={{ marginBottom: '0.5rem' }}>Admin Signup</h2>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Create a new administrator account.</p>
 
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleSignup}>
                     <div style={{ position: 'relative', marginBottom: '1rem' }}>
                         <User size={18} style={{ position: 'absolute', left: '12px', top: '14px', color: 'var(--text-muted)' }} />
                         <input
                             type="email"
-                            placeholder="Admin Email"
+                            placeholder="Email Address"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -87,13 +92,14 @@ const AdminLogin = () => {
                     </div>
 
                     {error && <p style={{ color: 'var(--accent)', fontSize: '0.9rem', marginBottom: '1rem' }}>{error}</p>}
+                    {success && <p style={{ color: '#4caf50', fontSize: '0.9rem', marginBottom: '1rem' }}>{success}</p>}
 
                     <button type="submit" className="btn-primary" style={{ width: '100%', padding: '12px', marginBottom: '1.5rem' }}>
-                        Sign In
+                        Create Account
                     </button>
 
                     <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                        Don't have an account? <span onClick={() => navigate('/admin/signup')} style={{ color: 'var(--accent)', cursor: 'pointer', fontWeight: 'bold' }}>Sign Up</span>
+                        Already have an account? <span onClick={() => navigate('/admin')} style={{ color: 'var(--accent)', cursor: 'pointer', fontWeight: 'bold' }}>Login</span>
                     </p>
                 </form>
             </div>
@@ -101,4 +107,4 @@ const AdminLogin = () => {
     );
 };
 
-export default AdminLogin;
+export default AdminSignup;

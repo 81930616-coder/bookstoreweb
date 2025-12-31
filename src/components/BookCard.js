@@ -16,7 +16,7 @@ const BookCard = ({ book }) => {
         }}>
             <div style={{ position: 'relative', height: '280px', overflow: 'hidden' }}>
                 <img
-                    src={book.image}
+                    src={book.image ? `http://localhost:5000${book.image}` : 'https://via.placeholder.com/300x400?text=No+Cover'}
                     alt={book.title}
                     style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }}
                     onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'}
@@ -39,9 +39,12 @@ const BookCard = ({ book }) => {
             </div>
 
             <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem' }}>{book.title}</h3>
+                <h3 style={{ margin: '0 0 0.2rem 0', fontSize: '1.2rem' }}>{book.title}</h3>
+                <p style={{ color: 'var(--primary)', margin: '0 0 0.8rem 0', fontSize: '0.9rem', fontWeight: 500 }}>
+                    {book.author ? `by ${book.author}` : 'Unknown Author'}
+                </p>
                 <p style={{ color: 'var(--text-muted)', margin: '0 0 1rem 0', fontSize: '0.9rem', flex: 1 }}>
-                    {book.description.substring(0, 80)}...
+                    {book.description?.substring(0, 80)}...
                 </p>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
